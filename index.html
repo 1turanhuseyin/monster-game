@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vue Basics</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <h1>Canavar Avcısı</h1>
+    </header>
+    <div id="game">
+      <section id="monster" class="container">
+        <h2>Canavar Sağlığı 
+          <span v-if="monsterHealth > 0">%{{ monsterHealth }}</span>
+          <span v-else> - ÖLÜ</span>
+        </h2>
+        <div class="healthbar">
+          <div class="healthbar__value" :style="monsterBarStyles"></div>
+        </div>
+      </section>
+      <section id="player" class="container">
+        <h2>Senin Sağlığın 
+          <span v-if="playerHealth > 0">%{{ playerHealth }}</span>
+          <span v-else> - ÖLÜ</span>
+        </h2>
+        <div class="healthbar">
+          <div class="healthbar__value" :style="playerBarStyles"></div>
+        </div>
+      </section>
+      <section class="container" v-if="winner">
+        <h2>Oyun Bitti!</h2>
+        <h3 v-if="winner === 'monster'">Kaybettin!</h3>
+        <h3 v-else-if="winner === 'player'">Kazandın!</h3>
+        <h3 v-else>Berabere!</h3>
+        <button @click="startGame">Yeni Oyun</button>
+      </section>
+      <section id="controls" v-else>
+        <button @click="attackMonster" onclick="audioShot.play()">SALDIR</button>
+        <button :disabled="mayUseSpecialAttack" @click="specialAttackMonster" onclick="audioSpecialAttack.play()">
+          ÖZEL SALDIRI
+        </button>
+        <button @click="healPlayer" onclick="audioHeal.play()">İYİLEŞTİR</button>
+        <button @click="surrender" onclick="audioSurrender.play()">TESLİM OL</button>
+      </section>
+      <section id="log" class="container">
+        <h2>Savaş Günlüğü</h2>
+        <ul>
+          <li v-for="logMessage in logMessages">
+            <span
+              :class="{'log--player': logMessage.actionBy === 'player', 'log--monster': logMessage.actionBy === 'monster'}"
+              >{{ logMessage.actionBy === 'player' ? 'Oyuncu' : 'Canavar'
+              }}</span
+            >
+            <span v-if="logMessage.actionType === 'heal'">
+              kendini %<span class="log--heal">{{ logMessage.actionValue }}</span> iyileştirdi</span
+            >
+            <span v-else>
+              saldırı etkisi <span class="log--damage">-%{{ logMessage.actionValue }}</span>
+            </span>
+          </li>
+        </ul>
+      </section>
+    </div>
+  </body>
+</html>
